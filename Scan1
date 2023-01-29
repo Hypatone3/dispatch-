@@ -1,0 +1,14 @@
+import java.util.Scanner;
+
+public class RedAlert
+{
+   public static void main(String[] args)
+   {
+      Scanner sc = new Scanner(System.in);
+      System.out.print("Enter the location of the red alert: ");
+      String location = sc.nextLine();
+      System.out.print("Enter the type of red alert (fire, theft, etc.): ");
+      String alertType = sc.nextLine();
+      System.out.println("Sending red alert to " + location + " for " + alertType + " emergency...");
+   }
+}
