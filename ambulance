@@ -1,0 +1,76 @@
+import CoreLocation
+
+class AmbulanceTracker {
+    let locationManager = CLLocationManager()
+    var ambulanceLocations = [CLLocation]()
+    
+    func startTracking() {
+        locationManager.delegate = self
+        locationManager.requestAlwaysAuthorization()
+        locationManager.startUpdatingLocation()
+    }
+    
+    func stopTracking() {
+        locationManager.stopUpdatingLocation()
+    }
+}
+
+extension AmbulanceTracker: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        for location in locations {
+            ambulanceLocations.append(location)
+        }
+    }
+}
+class AmbulanceUnits {
+    var units: [AmbulanceUnit]
+    
+    init() {
+        units = [AmbulanceUnit]()
+    }
+    
+    func addUnit(_ unit: AmbulanceUnit) {
+        units.append(unit)
+    }
+    
+    func removeUnit(unitId: String) {
+        units.removeAll { (unit) -> Bool in
+            return unit.unitId == unitId
+        }
+    }
+    
+    func getUnit(unitId: String) -> AmbulanceUnit? {
+        for unit in units {
+            if unit.unitId == unitId {
+                return unit
+            }
+        }
+        return nil
+    }
+    
+    func getAvailableUnits() -> [AmbulanceUnit] {
+        return units.filter { (unit) -> Bool in
+            return unit.status == .available
+        }
+    }
+}
+
+let ambulanceUnits = AmbulanceUnits()
+
+let unit1 = AmbulanceUnit(unitId: "123", crew: [], status: .available, location: CLLocation())
+let unit2 = AmbulanceUnit(unitId: "456", crew: [], status: .onCall, location: CLLocation())
+let unit3 = AmbulanceUnit(unitId: "789", crew: [], status: .enRoute, location: CLLocation())
+
+ambulanceUnits.addUnit(unit1)
+ambulanceUnits.addUnit(unit2)
+ambulanceUnits.addUnit(unit3)
+
+let availableUnits = ambulanceUnits.getAvailableUnits()
+print(availableUnits) // Output: [unit1]
+
+let unit = ambulanceUnits.getUnit(unitId: "456")
+print(unit?.status) // Output: onCall
+
+ambulanceUnits.removeUnit(unitId: "456")
+let unitRemoved = ambulanceUnits.getUnit(unitId: "456")
+print(unitRemoved) // Output: nil
